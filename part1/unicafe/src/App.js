@@ -6,8 +6,8 @@ const Button = ({ handleClick, text }) => (
   </button>
 )
 
-const Rating = ({ name, total }) => (
-  <div>{name} {total}</div>
+const Display = ({ text, value }) => (
+  <div>{text} {value}</div>
 )
 
 const App = () => {
@@ -20,6 +20,10 @@ const App = () => {
   const handleNeutralClick = () => setNeutral(neutral + 1)
   const handleBadClick = () => setBad(bad + 1)
 
+  const sum = good + bad + neutral
+  const avg = (1*good + 0*neutral + -1*bad) / sum
+  const pos = good / sum
+
   return (
     <div>
       <h1>give feedback</h1>
@@ -27,9 +31,12 @@ const App = () => {
       <Button handleClick={handleNeutralClick} text="neutral" />
       <Button handleClick={handleBadClick} text="bad" />
       <h1>statistics</h1>
-      <Rating name="good" total={good} />
-      <Rating name="neutral" total={neutral} />
-      <Rating name="bad" total={bad} />
+      <Display text="good" value={good} />
+      <Display text="neutral" value={neutral} />
+      <Display text="bad" value={bad} />
+      <Display text="all" value={sum} />
+      <Display text="average" value={avg} />
+      <Display text="positive" value={pos + " %"} />
     </div>
   )
 }
