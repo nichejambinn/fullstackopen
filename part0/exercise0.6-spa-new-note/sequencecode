@@ -1,0 +1,28 @@
+note over browser:
+user inputs note "my new note"
+and clicks submit button
+end note
+
+note over browser:
+browser executes event handler
+to interrupt normal form submit
+then 1) adds note to its list and
+2) redraws the notes html element
+before 3) submitting the request
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa \n Request JSON Payload: {content: "my new note", date: "2022-04-10T22:03:22.950Z"} 
+
+note over server:
+server adds the new note
+in POST body onto its array
+to include the next time a
+request for the page is made
+end note
+
+server-->browser: response status 201 (created): \n {"message": "note created"}
+
+note over browser:
+browser logs the response
+message to the console
+end note
