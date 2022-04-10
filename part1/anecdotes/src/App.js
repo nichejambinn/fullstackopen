@@ -6,6 +6,15 @@ const Button = ({ handleClick, text }) => (
   </button>
 )
 
+const Anecdote = ({ anecdote, votes }) => (
+  <div>
+    <p>
+      {anecdote}<br />
+      has {votes} votes
+    </p>
+  </div>
+)
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often',
@@ -31,12 +40,17 @@ const App = () => {
     setVotes(newVotes)
   }
 
+  // helper function to get the earliest index of the max value in an array
+  const maxIndex = (arr) => arr.indexOf(Math.max.apply(Math, arr))
+
   return (
     <div>
-      <p>{anecdotes[selected]}</p>
-      <p>has {votes[selected]} votes</p>
+      <h1>Anecdote of the day</h1>
+      <Anecdote anecdote={anecdotes[selected]} votes={votes[selected]} />
       <Button handleClick={handleVoteClick} text="vote" />
       <Button handleClick={handleNextAnecdoteClick} text="next anecdote" />
+      <h1>Anecdote with most votes</h1>
+      <Anecdote anecdote={anecdotes[maxIndex(votes)]} votes={votes[maxIndex(votes)]} />
     </div>
   )
 }
