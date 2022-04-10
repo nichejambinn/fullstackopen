@@ -1,0 +1,39 @@
+note over browser:
+user inputs note "my new note"
+and clicks submit button
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note \n Form Data: note: my new note
+
+note over server:
+server pushes form data for note 
+in POST body onto array of notes
+end note
+
+server-->browser: response status 302: redirect to /exampleapp/notes
+
+note over browser:
+browser initiates another
+request for /exampleapp/notes
+end note
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+server-->browser: HTML-code
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->browser: main.css
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+server-->browser: main.js
+
+note over browser:
+browser starts executing js-code
+that requests JSON data from server 
+end note
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server-->browser: [{ content: "HTML is easy", date: "2019-05-23" }, ... ,\n {content: "my new note", date: "2022-04-10"}]
+
+note over browser:
+browser executes the event handler
+that renders notes to display with
+new note included at the end
+end note
