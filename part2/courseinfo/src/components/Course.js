@@ -1,15 +1,14 @@
 import React from 'react'
 
-const Header = ({ course }) => <h1>{course}</h1>
+const Header = ({ course }) => <h2>{course}</h2>
 
 const Part = ({ part }) => 
   <p>
     {part.name} {part.exercises}
   </p>
 
-const Content = ({ parts }) => parts.map(part => 
-  <Part key={part.id} part={part} />
-)
+const Content = ({ id, parts }) => parts.map(part => 
+  <Part key={part.id} part={part} />)
 
 const Total = ({ total }) => 
   <p>
@@ -22,7 +21,7 @@ const Course = ({ course }) => {
   return (
     <div>
       <Header course={course.name} />
-      <Content parts={course.parts} />
+      <Content id={course.id} parts={course.parts} />
       <Total total={total} />
     </div>
   )
