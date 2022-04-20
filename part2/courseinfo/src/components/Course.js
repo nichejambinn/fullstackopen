@@ -12,7 +12,7 @@ const Content = ({ id, parts }) => parts.map(part =>
 
 const Total = ({ total }) => 
   <p>
-    Total of {total} exercises
+    <strong>Total of {total} exercises</strong>
   </p>
 
 const Course = ({ course }) => {
