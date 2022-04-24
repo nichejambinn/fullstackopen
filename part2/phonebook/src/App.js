@@ -26,7 +26,6 @@ const Persons = ({ persons }) =>
     {persons.map(person => <Person key={person.id} person={person} />)}
   </div>
 
-
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456', id: 1 },
