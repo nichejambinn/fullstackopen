@@ -1,10 +1,19 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const Country = ({ country }) => 
-  <div>
-    {country.name.common}
-  </div>
+const Country = ({ country }) => {
+  const [showCountry, setShowCountry] = useState(false)
+  const handleClick = () => setShowCountry(true)
+
+  return (
+    <>
+      {showCountry 
+        ? <CountryDetails country={country} />
+        : <div>{country.name.common} <button onClick={handleClick}>show</button></div>
+      }
+    </>
+  )
+}
 
 const CountryDetails = ({ country }) =>
   <div>
@@ -16,7 +25,7 @@ const CountryDetails = ({ country }) =>
     <h3>languages:</h3>
     <ul>
       {Object.values(country.languages).map(language =>
-        <li>
+        <li key={language}>
           {language}
         </li>
       )}
