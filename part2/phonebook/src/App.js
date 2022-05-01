@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import personService from './services/persons'
 
 const Person = ({ person }) => 
   <div>{person.name} {person.number}</div>
@@ -53,9 +54,13 @@ const App = () => {
         id: persons.length + 1
       }
   
-      setPersons(persons.concat(personObject))
-      setNewName('')
-      setNewNumber('')
+      personService
+        .create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
     } else {
       alert(`${nameToAdd} is already added to phonebook`)
     }
