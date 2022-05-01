@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
 
-const Person = ({ person }) => 
-  <div>{person.name} {person.number}</div>
+const Person = ({ person, deletePerson }) => 
+  <div>
+    {person.name} {person.number} <button onClick={deletePerson}>delete</button>
+  </div>
 
 const Filter = ({ filter, handleChange }) => 
   <div>
@@ -23,9 +25,15 @@ const PersonForm = ({ handleSubmit, name, handleNameChange, number, handleNumber
     </div>
   </form>
 
-const Persons = ({ persons }) => 
+const Persons = ({ persons, deletePerson }) => 
   <div>
-    {persons.map(person => <Person key={person.id} person={person} />)}
+    {persons.map(person => 
+      <Person 
+        key={person.id} 
+        person={person} 
+        deletePerson={() => deletePerson(person.id)} 
+      />
+    )}
   </div>
 
 const App = () => {
@@ -45,13 +53,18 @@ const App = () => {
 
   const addPerson = (event) => {
     const nameToAdd = newName.trim()
+    const person = persons.find(p => p.name === nameToAdd)
     event.preventDefault()
 
-    if (!persons.some((person) => person.name === nameToAdd)) {
+    if (!person) {
+      // once we can delete using persons array length causes unique id errors on server
+      const maxId = persons.reduce((max, person) =>
+        person.id > max ? person.id : max, 0)
+
       const personObject = {
         name: nameToAdd,
         number: newNumber.trim(),
-        id: persons.length + 1
+        id: maxId + 1
       }
   
       personService
@@ -62,7 +75,38 @@ const App = () => {
           setNewNumber('')
         })
     } else {
-      alert(`${nameToAdd} is already added to phonebook`)
+      if (window.confirm(`${nameToAdd} is already added to phonebook, replace the old number with a new one?`)) {
+        updateNumberOf(person.id)
+      }
+    }
+  }
+
+  const updateNumberOf = (id) => {
+    const person = persons.find(person => person.id === id)
+    const changedPerson = { 
+      ...person, 
+      number: newNumber.trim() 
+    }
+
+    personService
+      .update(id, changedPerson)
+      .then(returnedPerson => {
+        console.log(`number of ${returnedPerson.name} updated`)
+        setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+      })
+  }
+
+  const deletePerson = (id) => {
+    const person = persons.find(person => person.id === id)
+
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+        .remove(id)
+        .then(responseStatus => {
+          console.log(responseStatus === 200 ? `${person.name} deleted` : `delete unsuccessful`)
+
+          setPersons(persons.filter(person => person.id !== id))
+        })
     }
   }
 
@@ -95,7 +139,7 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} deletePerson={deletePerson} />
     </div>
   )
 }
