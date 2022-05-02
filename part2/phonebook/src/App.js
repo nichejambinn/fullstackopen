@@ -3,13 +3,25 @@ import axios from 'axios'
 import { Persons, PersonForm, Filter } from './components/Person'
 import personService from './services/persons'
 
-const Notification = ({ message }) => {
+const Notification = ({ message, type }) => {
   if (message === null) {
     return null
   }
 
+  const notificationStyle = { color: 'grey' }
+  switch (type) {
+    case "success":
+      notificationStyle.color = 'green'    
+      break
+    case "error":
+      notificationStyle.color = 'red'
+      break
+    default:
+      break
+  }
+
   return (
-    <div className='notification'>
+    <div className='notification' style={notificationStyle}>
       {message}
     </div>
   )
@@ -20,7 +32,8 @@ const App = () => {
   const [newName, setNewName] = useState("")
   const [newNumber, setNewNumber] = useState("")
   const [nameFilter, setNameFilter] = useState("")
-  const [message, setMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   // fetch initial state of persons from server
   useEffect(() => {
@@ -50,9 +63,9 @@ const App = () => {
       personService
         .create(personObject)
         .then(returnedPerson => {
-          setMessage(`Added ${returnedPerson.name}`)
+          setSuccessMessage(`Added ${returnedPerson.name}`)
           setTimeout(() => {
-            setMessage(null)
+            setSuccessMessage(null)
           }, 5000)
 
           setPersons(persons.concat(returnedPerson))
@@ -78,6 +91,12 @@ const App = () => {
       .then(returnedPerson => {
         console.log(`number of ${returnedPerson.name} updated`)
         setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+      })
+      .catch(error => {
+        setErrorMessage(`Information of ${person.name} has already been removed`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
       })
   }
 
@@ -114,7 +133,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message} />
+      <Notification message={successMessage} type="success" />
+      <Notification message={errorMessage} type="error" />
       <Filter filter={nameFilter} handleChange={handleNameFilterChange} />
       <h2>add a new</h2>
       <PersonForm 
