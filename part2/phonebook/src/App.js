@@ -1,46 +1,26 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { Persons, PersonForm, Filter } from './components/Person'
 import personService from './services/persons'
 
-const Person = ({ person, deletePerson }) => 
-  <div>
-    {person.name} {person.number} <button onClick={deletePerson}>delete</button>
-  </div>
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
 
-const Filter = ({ filter, handleChange }) => 
-  <div>
-    filter shown with <input value={filter} onChange={handleChange} />
-  </div>
-
-const PersonForm = ({ handleSubmit, name, handleNameChange, number, handleNumberChange }) => 
-  <form onSubmit={handleSubmit}>
-    <div>
-      name: <input value={name} onChange={handleNameChange} />
+  return (
+    <div className='notification'>
+      {message}
     </div>
-    <div>
-      number: <input value={number} onChange={handleNumberChange} />
-    </div>
-    <div>
-      <button type="submit">add</button>
-    </div>
-  </form>
-
-const Persons = ({ persons, deletePerson }) => 
-  <div>
-    {persons.map(person => 
-      <Person 
-        key={person.id} 
-        person={person} 
-        deletePerson={() => deletePerson(person.id)} 
-      />
-    )}
-  </div>
+  )
+}
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState("")
   const [newNumber, setNewNumber] = useState("")
   const [nameFilter, setNameFilter] = useState("")
+  const [message, setMessage] = useState(null)
 
   // fetch initial state of persons from server
   useEffect(() => {
@@ -70,6 +50,11 @@ const App = () => {
       personService
         .create(personObject)
         .then(returnedPerson => {
+          setMessage(`Added ${returnedPerson.name}`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
@@ -129,6 +114,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter filter={nameFilter} handleChange={handleNameFilterChange} />
       <h2>add a new</h2>
       <PersonForm 
